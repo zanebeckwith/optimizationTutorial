@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage[colorlinks=true]{hyperref}
+
+\begin{document}
+
+\title{Brief Introduction to Mathematical Optimization}
+\author{Zane Beckwith}
+\date{Summer 2013}
+\maketitle
+
+Introduction.
+
+Mention SciPy's optimization module.
+
+\section*{What Is Optimization?}
+  \subsection*{Heuristic vs.\ Algorithm}
+  \subsection*{Linear vs.\ Non-linear}
+  \subsection*{Convex vs.\ Non-convex}
+  \subsection*{Continuous vs.\ Discrete (`Combinatorial')}
+  \subsection*{Local vs.\ Global}
+  \subsection*{Deterministic (`Gradient'?) vs.\ Stochastic}
+  \subsection*{Don't forget constraints!}
+
+\section*{Nelder-Mead or `Downhill Simplex'}
+  Heuristic (so can return non-optimized values), 
+  and non-linear.
+
+  Discuss simplices.
+
+  Only requires function values,
+  not gradients. Thus, can be used
+  if gradient can't be found, but 
+  generally slower than gradient methods.
+
+  Better (related?) methods now available
+  and widely-used.
+
+  Used in Python's scipy.optimize.fmin function.
+
+  \href{http://userpages.umbc.edu/~rostamia/nelder-mead.html}{Link to gif}
+
+  Silly example: simulation code that requires two parameters
+  to model a physical scenario; want to find values of parameters
+  which give best design (eg.\ bridge design?)
+
+  Suggest starting simplex that finds minimum; then
+  suggest one that gets stuck. They can then play
+  with starting simplices, and/or object functions.
+
+\section*{Simulated Annealing}
+  Heurstic, but now better at finding
+  global optimum.
+
+  Related to Monte Carlo (the Metropolis method).
+
+  Check out Python's scipy.optimize.anneal function.
+  Also, maybe they can write their own (not on Wednesday,
+  but not too hard for after...).
+
+\end{document}
