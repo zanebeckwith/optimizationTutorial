@@ -1,11 +1,18 @@
 #!/usr/bin/env python
 
 """
-This file defines a python function 
+This file implements a python function 
 that is intended to be used as part of
 a tutorial on mathematical optimization.
 
 Author: Zane Beckwith
+
+input :
+	energy		: COM energy of beam of particles
+							allegedly being simulated
+	helicity	: helicity of the alleged beam
+output :
+						: cross-section of scattering
 
 In the toy example given in the tutorial,
 we imagine that this function actually represents
