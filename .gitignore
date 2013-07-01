@@ -1,1 +1,5 @@
 fabians/*
+*.out
+*.aux
+*.pdf
+
