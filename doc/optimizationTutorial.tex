@@ -1,60 +1,226 @@
+% Tutorial on mathematical optimization, 
+% given to students in the UNC-CH CAP-REU program
+% during the summer of 2013.
+%
+% Designed to be used after a ~1.5hr intro to
+% random numbers and Monte Carlo
+%
+% Author: Zane Beckwith
+
 \documentclass{article}
 \usepackage[colorlinks=true]{hyperref}
 
 \begin{document}
 
 \title{Brief Introduction to Mathematical Optimization}
-\author{Zane Beckwith}
+\author{Zane Beckwith \\
+UNC-CH CAP-REU Program}
 \date{Summer 2013}
 \maketitle
 
-Introduction.
+These notes are a very brief introduction to the very not-brief field of 
+mathematical optimization. I want to stress that this tutorial does not
+pretend to be complete, and its author does not pretend to be an expert
+on the field. Because I'm no expert, I warn you to take everything I say
+with a few grains of salt and always check what I say before you use
+it in an important research context. \textit{Caveat emptor}!
 
-Mention SciPy's optimization module.
+However, the hope is to give you a taste of what computational
+optimization methods are all about, and introduce you to some of the important
+terms in the field should you run into them later on. If/when you need to dive
+into optimization techniques, hopefully these notes will give you an idea of 
+where to jump off.
 
-\section*{What Is Optimization?}
-  \subsection*{Heuristic vs.\ Algorithm}
-  \subsection*{Linear vs.\ Non-linear}
-  \subsection*{Convex vs.\ Non-convex}
-  \subsection*{Continuous vs.\ Discrete (`Combinatorial')}
-  \subsection*{Local vs.\ Global}
-  \subsection*{Deterministic (`Gradient'?) vs.\ Stochastic}
-  \subsection*{Don't forget constraints!}
+Code examples/exercises will be in Python (Python 2.x). Beyond the simplistic
+examples given in these notes, though, you should know that the SciPy package
+has a module `scipy.optimization' that has many optimization tools. For further
+exploration, or for actually using optimization methods in your work, 
+this would be a good place to start looking.
 
-\section*{Nelder-Mead or `Downhill Simplex'}
-  Heuristic (so can return non-optimized values), 
-  and non-linear.
+\section*{What Is Computational Optimization?}
+	Mathematical optimization seeks to find the `best' choice among
+	a set of possible choices. In particular, we want to find this best
+	value with the minimum number of computational effort. 
+	The set of choices is frequently referred
+	to as the `search space'; most of the time (particularly, in this tutorial)
+	the search space is simply some subset of Euclidean space.
 
-  Discuss simplices.
+	The way we define `best' is as the minimum of some function $f$:
+	the `objective function'. The objective function is a mapping
+	from the search space to the real numbers. If your problem actually
+	wants you to find the maximum of some function (e.\ g.\ number of users
+	of your website), that's the same as minimizing the negative of the function.
 
-  Only requires function values,
-  not gradients. Thus, can be used
-  if gradient can't be found, but 
-  generally slower than gradient methods.
+	One of the most common examples of optimization in scientific contexts
+	is function fitting: you have some data and you want to find a function that
+	describes it. The search space in this case would be the parameter values
+	characterizing the possible functions 
+	(e.\ g.\ slope and y-intercept for linear functions), 
+	and the objective function
+	would be some measure of the distance of your data from the function values.
+	Least-squares fitting is the classic example of this type of problem.
 
-  Better (related?) methods now available
-  and widely-used.
+% 	There are, however, many many types of questions that may be phrases as
+% 	optimization problems, and there have thus developed many many methods
+% 	for finding solutions to these types of problems. Here, I would like to give
+% 	an overview of some of the ways the field of mathematical optimization can
+% 	be split. The point is that you should get some idea of where your particular 
+% 	problem lies, because each domain probably has methods designed to work well
+% 	within it, methods that probably don't work well in other domains.
+% 	
+% 	Note that these categories are not mutually-exclusive (an optimization
+% 	problem can be both linear and convex, for example). In each dichotomy,
+% 	I've tried to put the division which is in general `easier' to perform
+% 	first. 
+% 
+% 	You may want to skip the next subsections and go straight to the
+% 	exercises below, especially if strapped for time. Hopefully,
+% 	you can come back here if you need to.
+% 
+%   \subsection*{Heuristic vs.\ Algorithmic}
+% 		In computation, there's a significant divide between heuristics
+% 		and algorithms. If you can design an algorithm, 
+% 		that means you've found a method that, 
+% 		if followed fully and correctly, will always produce the
+% 		desired result. On the other hand, a heuristic method will
+% 		hopefully find you a `good' result, but it's not guaranteed 
+% 		to be the best, and may in fact sometimes be terrible. 
+% 
+% 		Unfortunately, sometimes a heuristic method is all that can be
+% 		found for a particular problem. In general computational work,
+% 		it's important to know which methods
+% 		are heuristic. On the other hand, for optimization problems
+% 		in particular, if you're using an alleged algorithm, make sure
+% 		you know for which types of problems the algorithm is in fact
+% 		known to find the best answer; you may think you can assume
+% 		the result is the best answer, but if you give it the wrong kind
+% 		of problem you may be out-of-luck. For example, if you use an algorithm
+% 		designed for convex objective functions (see below) but give it a non-convex
+% 		function, your solution quite likely will not be the true optimum.
+% 
+%   \subsection*{Local vs.\ Global}
+% 		Related to the issue of algorithmic vs.\ heuristic is the difference 
+% 		between a local optimum and a global one: 
+% 		just like optima for the calculus of single-variable
+% 		functions, a local optimum means no \emph{nearby} choices
+% 		are better, but there may be better choices elsewhere in the search space.
+% 
+% 		Methods that find local optima are frequently faster and easier to use;
+% 		you just have to make sure the result you get is the true global
+% 		optimum. One way to do this is to start a local optimizer in multiple
+% 		regions of you search space. This, clearly, can be tedious/expensive,
+% 		so there are more-refined ways of doing it, too.
+% 
+%   \subsection*{Linear vs.\ Non-linear}
+% 		Much of the classic work on optimization focuses on optimizing
+% 		linear functions of the search space: `linear programming' is
+% 		what it's called. While many problems can in fact be described,
+% 		or at least approximated, by linear functions, many cannot. However,
+% 		if yours can be, the linear methods are probably faster, and maybe
+% 		algorithmic.
+% 
+%   \subsection*{Convex vs.\ Non-convex}
+% 		Convex is a property of functions that essentially boils down to 
+% 		``There's only one minimum and you can't get trapped in false-minima''.
+% 		As with linear problems, if yours is a convex problem, the methods
+% 		available to you are refined and powerful.
+% 
+%   \subsection*{Continuous vs.\ Discrete (`Combinatorial')}
+% 		Though we're focusing on problems in which the search space
+% 		is continuous, there are many problems in which it's discrete
+% 		(e.\ g.\ ``Which route between these cities takes the least
+% 		amount of time?''). The methods for these two classes of 
+% 		problem are, not surprisingly, quite different, so make sure you don't
+% 		try to fit a square peg into a round hole. 
+% 
+%   \subsection*{Deterministic (`Gradient'?) vs.\ Stochastic}
+% 		Most of the classic optimization methods are deterministic,
+% 		meaning that if you start the same problem with the same initial
+% 		conditions, you're going to get the same result with the same
+% 		intermediate steps; because these methods frequently rely
+% 		on calculating gradients to find which direction to move
+% 		for finding the minimum, they're frequently known as `gradient'
+% 		methods. 
+% 
+% 		However, deterministic methods often have issues with getting stuck
+% 		in false minima. To combat this, you can use a stochastic method,
+% 		which in some way uses random number generation to sample larger
+% 		portions of your search space. In general, though, stochastic methods,
+% 		with their random number generation requirements, are going to 
+% 		be computationally-costly compared to traditional deterministic
+% 		methods. Many commercial optimization packages actually use some
+% 		combination of the two.
+% 
+%   \subsection*{Don't forget constraints!}
+% 		Just to further complicate things, sometimes you won't be able
+% 		to fully explore your search space, but will be constrained to
+% 		only certain subsets; for example, material construction exigencies
+% 		may limit you to only certain dimensions for the components of
+% 		that bridge you're trying to design. Again, problems with strict
+% 		and complicated constraints require special methods, so if you're in 
+% 		that boat, make sure you're using the correct paddle.
 
-  Used in Python's scipy.optimize.fmin function.
+\section*{Example: Scattering Cross-Section Simulation}
+	So far, this has been pretty general and vague; let's get down
+	to brass tacks with a (contrived) example. 
 
-  \href{http://userpages.umbc.edu/~rostamia/nelder-mead.html}{Link to gif}
+	Let's say you work in a nuclear physics lab, scattering a beam
+	of particles off a target to study some nuclear-astrophysics process.
+	The beam apparatus is controlled by two parameters: the energy of
+	the particles, and the projection of the particles' spin along
+	the beam direction (the `helicity'). 
 
-  Silly example: simulation code that requires two parameters
-  to model a physical scenario; want to find values of parameters
-  which give best design (eg.\ bridge design?)
+	You want to find the parameter values that give you the highest 
+	cross-section, so you can input those to your beam controller and
+	observe the largest-possible number of events. But running the beam,
+	of course, is expensive, so you can't just play around and see what works.
 
-  Suggest starting simplex that finds minimum; then
-  suggest one that gets stuck. They can then play
-  with starting simplices, and/or object functions.
+	Luckily, one of your collaborators has provided you with a program that simulates
+	the collision and reports the scattering cross-section, given these two
+	parameters as inputs. Let's call their simulation program scatterSim.
+	Unfortunately, let's say this program is also somewhat computationally-intensive,
+	so again you can't just fiddle around and see what works.
 
-\section*{Simulated Annealing}
-  Heurstic, but now better at finding
+	What you need is to find the \emph{optimal} energy and helicity
+	to give the highest cross-section. To do this, we're going to use
+	the Nelder-Mead optimization method.
+
+	\subsection*{Nelder-Mead or `Downhill Simplex'}
+		The Nelder-Mead method is a common, fairly-simple, heuristic method
+		for finding optima in non-linear, not-necessarily-convex, continuous problems.
+		However, it's known to have
+		a problem with returning non-optimal results. For that reason,
+		these days more sophisticated methods are usually used
+		(\textbf{MENTION SOME BETTER METHODS}).
+
+		The method is deterministic, though it only requires function values,
+		not gradients. Thus, it can be used when a gradient can't be found
+		(e.\ g.\ for some complicated function). However, it's
+		generally slower than a gradient method, because more function evaluations
+		must be made.
+
+		The Nelder-Mead method is used in Python's scipy.optimize.fmin function.
+
+		Quick run-down of method, including defining simplex.
+
+		Show animation of method working:
+		\href{http://userpages.umbc.edu/~rostamia/nelder-mead.html}{Link to gif}
+
+	\subsection*{Give It a Try}
+		Suggest starting simplex that finds minimum; then
+		suggest one that gets stuck. They can then play
+		with different starting simplices and/or object functions.
+
+\section*{Taste of Stochasticity: Simulated Annealing}
+  Heuristic, but now better at finding
   global optimum.
+
+	Stochastic.
 
   Related to Monte Carlo (the Metropolis method).
 
-  Check out Python's scipy.optimize.anneal function.
-  Also, maybe they can write their own (not on Wednesday,
+  Suggest they play around with Python's scipy.optimize.anneal function.
+  Also, suggest that they can write their own (not during tutorial,
   but not too hard for after...).
 
 \end{document}
