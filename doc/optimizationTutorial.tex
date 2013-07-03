@@ -25,11 +25,11 @@ on the field. Because I'm no expert, I warn you to take everything I say
 with a few grains of salt and always check what I say before you use
 it in an important research context. \textit{Caveat emptor}!
 
-However, the hope is to give you a taste of what computational
-optimization methods are all about, and introduce you to some of the important
-terms in the field should you run into them later on. If/when you need to dive
-into optimization techniques, hopefully these notes will give you an idea of 
-where to jump off.
+% However, the hope is to give you a taste of what computational
+% optimization methods are all about, and introduce you to some of the important
+% terms in the field should you run into them later on. If/when you need to dive
+% into optimization techniques, hopefully these notes will give you an idea of 
+% where to jump off.
 
 Code examples/exercises will be in Python (Python 2.x). The SciPy package
 has a module `scipy.optimization' that has many optimization tools. For further
@@ -38,11 +38,11 @@ this would be a good place to start looking.
 
 \section*{What Is Computational Optimization?}
 	Mathematical optimization seeks to find the `best' choice among
-	a set of possibilities; in addition, we want to find this best
+	a set of possibilities; of course, we also want to find this best
 	value with a minimum of computational effort. 
 	Think of these examples: finding the lowest point on a radar image
 	of the seafloor; determining reaction constants that best describe
-	observed reaction rates; or, ordering the cities visited during a trip
+	observed reaction rates; or ordering the cities visited during a trip
 	so as to minimize the gas used.
 
 	The set of choices is frequently referred
@@ -158,9 +158,8 @@ this would be a good place to start looking.
 	the particles, and the projection of the particles' average spin direction along
 	the beam direction (the `helicity'). 
 
-	When designing the experiment, you want to use 
-	the parameter values that give you the highest 
-	cross-section, so you can observe the largest-possible
+	When designing the experiment, you want to use the parameter values
+  that give you the highest cross-section, so you can observe the largest-possible
 	number of events.
 
 	Luckily, one of your collaborators has provided you with a program that simulates
@@ -185,28 +184,103 @@ this would be a good place to start looking.
 
 		Python's scipy.optimize.fmin function uses this method.
 
-		Quick run-down of method, including defining simplex.
+    This method uses a simplex to probe the values of the function.
+    A simplex is just the simplest shape you can make in $N$
+    dimensions by using $N+1$ points; for example, a line in
+    1-dimension, or a triangle in 2-dimensions. 
+
+    The Nelder-Mead method samples the function at the $N+1$ points
+    of its simplex, then alters the points in the simplex to
+    feel its way to the minimum of the function. Specifically, it:
+    \begin{description}
+      \item[Reflects] Flipping itself end-over-end
+      \item[Expands] Pushing one point away from itself
+      \item[Contracts] Pulling one point in toward itself
+      \item[Reduces] Shrinking all points inward
+    \end{description}
+
+    The simplex keeps changing like this to find lower
+    function values. The method returns once it has reached
+    some definition of `closeness' to the minimum; in the example
+    I wrote, the method determines closeness when the simplex
+    gets very small. This is a pretty bad way to determine this,
+    but it's simple, and not all that different from how it's
+    done in beefier versions (also, it works!).
 
 		The method has a nice intuitive visualization, as in 
 		\href{http://userpages.umbc.edu/~rostamia/nelder-mead.html}{this gif}
-		of a two-dimensional example. The reason for the name
+		of a two-dimensional example; the grey simplex is the previous 
+    position, and the red is the current. The reason for the name
 		`Downhill Simplex' is pretty clear from watching this.
 
+    You can take a look at my source code for `neldermead.py' to
+    get a better view of how these steps are implemented; it's 
+    surprisingly-straightforward. Alter this code all you 
+    want, to see what happens as you change different things.
+
 	\subsection*{Give It a Try}
-		Suggest starting simplex that finds minimum; then
-		suggest one that gets stuck. They can then play
-		with different starting simplices and/or object functions.
+    Now that we understand our method, it's time to get busy.
+    In the ``src'' directory, above this one, you're given the python
+    module I've written to implement the Nelder-Mead method
+    (`neldermead.py') as well as the `simulation code'
+    for Scatter (`scatter.py').
+    
+    Assume that the energies and 
+    helicities you're interested in are located between
+    $-5$ and $5$ (don't worry about units). Now, go and
+    find the best values for your beam!
+
+    What did you find? 
+    
+    Did you try multiple tolerance values? What happened?
+    
+    Did you try multiple starting simplices?
+    What happened? 
+
+    You have the source code for the Scatter `simulator', so you
+    can go ahead and peak inside. 
+    You may find the Wikipedia page on ``Himmelblau's function'' interesting\dots.
+
+    Also, you can go into `neldermead.py' and play with some of the 
+    parameters, particularly $\alpha$, etc.
 
 \section*{Taste of Stochasticity: Simulated Annealing}
-  Heuristic, but now better at finding
-  global optimum.
+  As mentioned above, deterministic methods like
+  the Nelder-Mead can sometimes get stuck in false minima:
+  the simplex just sniffs out the decreasing direction,
+  but if there's a lower valley far away, it has no idea.
 
-	Stochastic.
+  To combat this, you can let your method jump around all over your search space.
+  Now, rather than falling in love with what \emph{locally} looks like the 
+  minimum, the method can sample minima far away.
 
-  Related to Monte Carlo (the Metropolis method).
+  Such methods are known as stochastic methods. Clearly, they're very powerful
+  for finding global minima. However, this power comes with a price:
+  stochastic methods are generally computationally more expensive than
+  deterministic ones, and they can be fussy to get working properly.
 
-  Suggest they play around with Python's scipy.optimize.anneal function.
-  Also, suggest that they can write their own (not during tutorial,
-  but not too hard for after...).
+  One of the most famous stochastic methods is called 
+  `simulated annealing'.
+  This method is closely related to Monte Carlo methods 
+  (specifically, the Metropolis method), and simulates the kind
+  of `hopping' between states that systems do when at a finite 
+  temperature.
+  
+  Just as materials are heated and then rapidly cooled
+  (`annealed') to lower their energy, 
+  your objective function can be sampled by a large number of differing choices
+  (this is high temperature), with the likelihood of a choice 
+  jumping to a very different choice decreasing with time
+  (this is the lowering of the temperature, the annealing).
+
+  Wikipedia has a nice page on simulated annealing, in particular
+  a nice gif of the method finding the highest point in a
+  1-dimensional function.
+
+  The python package SciPy has, in addition to many nice 
+  minimization and optimization modules, a module for
+  simulated annealing: 'scipy.optimize.anneal'. With the
+  remaining time, you may want to check out this module,
+  as well as the Wikipedia page.
 
 \end{document}
