@@ -25,12 +25,6 @@ on the field. Because I'm no expert, I warn you to take everything I say
 with a few grains of salt and always check what I say before you use
 it in an important research context. \textit{Caveat emptor}!
 
-% However, the hope is to give you a taste of what computational
-% optimization methods are all about, and introduce you to some of the important
-% terms in the field should you run into them later on. If/when you need to dive
-% into optimization techniques, hopefully these notes will give you an idea of 
-% where to jump off.
-
 Code examples/exercises will be in Python (Python 2.x). The SciPy package
 has a module `scipy.optimization' that has many optimization tools. For further
 exploration, or for actually using optimization methods in your work, 
@@ -67,87 +61,12 @@ this would be a good place to start looking.
 
 	There are, however, many many types of questions that may be phrased as
 	optimization problems, and there have thus developed many many methods
-	for finding solutions to these types of problems. Here, I would like to give
+	for finding solutions to these types of problems. For this reason,
+	I've included an appendix to this tutorial, which gives
 	some examples of the ways the field of mathematical optimization can
-	be divided. The point is that you should get some idea of where your particular 
-	problem lies, because each domain probably has methods designed to work well
-	within it, methods that probably don't work well in other domains.
+	be divided. You may want to flip to it if the example below uses any terms 
+	you're not familiar with.
 	
-	These categories are not mutually-exclusive (an optimization
-	problem can be both linear and convex, for example) and are certainly
-	not exhaustive. In each dichotomy,
-	I've tried to name first the division that is, in general, `easier' to perform.
-
-	You may want to skip the next subsections and go straight to the
-	exercises below if strapped for time. You can come back here if you need to.
-
-  \subsection*{Heuristic vs.\ Algorithmic}
-		An algorithm is a method that, if followed fully and correctly,
-		is known to obtain the best answer; a heuristic should give you
-		a good-enough answer, but maybe not the best, and sometimes it
-		may be a terrible answer.
-		Unfortunately, sometimes a heuristic method is all that can be
-		found for a particular problem.
-		It's always important to know which methods
-		are heuristic and which are algorithmic. If you're using an alleged algorithm,
-		make sure you know for which types of problems the algorithm is in fact
-		known to find the best answer; you may think you can assume
-		the result is the best answer, but if you're giving it the wrong kind
-		of problem you may be wrong.
-
-  \subsection*{Local vs.\ Global}
-		Related to the issue of algorithmic vs.\ heuristic is the difference 
-		between a local optimum and a global one: 
-		just like optima for the calculus of single-variable
-		functions, a local optimum means no \emph{nearby} choices
-		are better, but there may be better choices elsewhere in the search space.
-		Methods that find local optima are frequently faster and easier to use;
-		you just have to make sure the result you get is the true global
-		optimum. A quick way to do this is to start a local optimizer in multiple
-		regions of you search space. However, this is clearly tedious, so if you
-		think there's a high likelihood of getting stuck in a false minimum,
-		know your options (a stochastic method may be smart; see below).
-
-  \subsection*{Linear vs.\ Non-linear}
-		Much of the classic work on optimization focuses on optimizing
-		linear functions of the search space: `linear programming' is
-		what it's called. While many problems can in fact be described,
-		or at least approximated, by linear functions, many cannot. However,
-		if yours can be, the linear methods are probably faster, and maybe
-		algorithmic.
-
-  \subsection*{Convex vs.\ Non-convex}
-		Convex is a property of functions that essentially boils down to 
-		``There's only one minimum and you can't get trapped in false-minima''.
-		As with linear problems, if yours is a convex problem, the methods
-		available to you are refined and powerful.
-
-  \subsection*{Continuous vs.\ Discrete (`Combinatorial')}
-		Though we're focusing on problems in which the search space
-		is continuous, there are many problems in which it's discrete
-		(e.\ g.\ ``Which route between these cities takes the least
-		amount of time?''). The methods for these two classes of 
-		problem are, not surprisingly, quite different, so make sure you don't
-		try to fit a square peg into a round hole. 
-
-  \subsection*{Deterministic (`Gradient') vs.\ Stochastic}
-		Many of the classic optimization methods are deterministic,
-		meaning that if you start the same problem with the same initial
-		conditions, you're going to get the same result with the same
-		intermediate steps. Because these methods frequently rely
-		on calculating gradients to find which direction to move
-		for finding the minimum, they're frequently known as `gradient'
-		methods. 
-
-		However, deterministic methods can have issues with getting stuck
-		in false minima. To combat this, you can use a stochastic method,
-		which, in one way or another, uses random number generation to sample larger
-		portions of your search space. In general, though, stochastic methods,
-		with their random number generation requirements, are going to 
-		be computationally-costly compared to traditional deterministic
-		methods. Many commercial optimization packages actually use some
-		combination of the two.
-
 \section*{Example: Scattering Cross-Section Simulation}
 	So far, this has been pretty general and vague; let's get down
 	to brass tacks with a (contrived) example. 
@@ -162,7 +81,8 @@ this would be a good place to start looking.
   that give you the highest cross-section, so you can observe the largest-possible
 	number of events.
 
-	Luckily, one of your collaborators has provided you with a program that simulates
+	Luckily, one of your collaborators has provided you with
+	a program that simulates
 	the collision and reports the scattering cross-section, given your two
 	parameters as inputs. Let's call their simulation program `Scatter'.
 	Unfortunately, we're going to assume 
@@ -282,5 +202,84 @@ this would be a good place to start looking.
   simulated annealing: 'scipy.optimize.anneal'. With the
   remaining time, you may want to check out this module,
   as well as the Wikipedia page.
+
+\section*{Appendix}
+	This appendix discusses examples of how the field of optimization is often
+	sub-divided. The point is that you should get some idea of
+	where your particular 
+	problem lies, because each domain probably has methods designed to work well
+	within it, methods that probably don't work well in other domains.
+	
+	These categories are not mutually-exclusive (an optimization
+	problem can be both linear and convex, for example) and are certainly
+	not exhaustive. In each dichotomy,
+	I've tried to name first the division that is, in general, `easier' to perform.
+
+  \subsection*{Heuristic vs.\ Algorithmic}
+		An algorithm is a method that, if followed fully and correctly,
+		is known to obtain the best answer; a heuristic should give you
+		a good-enough answer, but maybe not the best, and sometimes it
+		may be a terrible answer.
+		Unfortunately, sometimes a heuristic method is all that can be
+		found for a particular problem.
+		It's always important to know which methods
+		are heuristic and which are algorithmic. If you're using an alleged algorithm,
+		make sure you know for which types of problems the algorithm is in fact
+		known to find the best answer; you may think you can assume
+		the result is the best answer, but if you're giving it the wrong kind
+		of problem you may be wrong.
+
+  \subsection*{Local vs.\ Global}
+		Related to the issue of algorithmic vs.\ heuristic is the difference 
+		between a local optimum and a global one: 
+		just like optima for the calculus of single-variable
+		functions, a local optimum means no \emph{nearby} choices
+		are better, but there may be better choices elsewhere in the search space.
+		Methods that find local optima are frequently faster and easier to use;
+		you just have to make sure the result you get is the true global
+		optimum. A quick way to do this is to start a local optimizer in multiple
+		regions of you search space. However, this is clearly tedious, so if you
+		think there's a high likelihood of getting stuck in a false minimum,
+		know your options (a stochastic method may be smart; see below).
+
+  \subsection*{Linear vs.\ Non-linear}
+		Much of the classic work on optimization focuses on optimizing
+		linear functions of the search space: `linear programming' is
+		what it's called. While many problems can in fact be described,
+		or at least approximated, by linear functions, many cannot. However,
+		if yours can be, the linear methods are probably faster, and maybe
+		algorithmic.
+
+  \subsection*{Convex vs.\ Non-convex}
+		Convex is a property of functions that essentially boils down to 
+		``There's only one minimum and you can't get trapped in false-minima''.
+		As with linear problems, if yours is a convex problem, the methods
+		available to you are refined and powerful.
+
+  \subsection*{Continuous vs.\ Discrete (`Combinatorial')}
+		Though we're focusing on problems in which the search space
+		is continuous, there are many problems in which it's discrete
+		(e.\ g.\ ``Which route between these cities takes the least
+		amount of time?''). The methods for these two classes of 
+		problem are, not surprisingly, quite different, so make sure you don't
+		try to fit a square peg into a round hole. 
+
+  \subsection*{Deterministic (`Gradient') vs.\ Stochastic}
+		Many of the classic optimization methods are deterministic,
+		meaning that if you start the same problem with the same initial
+		conditions, you're going to get the same result with the same
+		intermediate steps. Because these methods frequently rely
+		on calculating gradients to find which direction to move
+		for finding the minimum, they're frequently known as `gradient'
+		methods. 
+
+		However, deterministic methods can have issues with getting stuck
+		in false minima. To combat this, you can use a stochastic method,
+		which, in one way or another, uses random number generation to sample larger
+		portions of your search space. In general, though, stochastic methods,
+		with their random number generation requirements, are going to 
+		be computationally-costly compared to traditional deterministic
+		methods. Many commercial optimization packages actually use some
+		combination of the two.
 
 \end{document}
