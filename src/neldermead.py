@@ -77,11 +77,11 @@ def minimize(func, initial_simplex, max_iterations, tolerance):
         expanded_point = center_of_gravity + \
             gamma * (center_of_gravity - highest_value_and_point[1])
         expanded_value = func(expanded_point)
-      if expanded_value < reflected_value:
-        values_and_points[-1] = [expanded_value, expanded_point]
-      else:
-        values_and_points[-1] = [reflected_value, reflected_point]
-      continue
+        if expanded_value < reflected_value:
+          values_and_points[-1] = [expanded_value, expanded_point]
+        else:
+          values_and_points[-1] = [reflected_value, reflected_point]
+        continue
       contracted_point = values_and_points[-1][1] + \
           rho * (center_of_gravity - highest_value_and_point[1])
       contracted_value = func(contracted_point)
