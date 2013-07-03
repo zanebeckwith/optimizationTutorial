@@ -14,17 +14,19 @@ using a Nelder-Mead optimizer method (written for the tutorial, and
 included in this directory) to find the 'parameter values' 
 ('energy' and 'helicity') that give the largest cross-section.
 
-In reality, this is simply the negative of Himmelblau's function.
+In reality, this is simply the negative of Himmelblau's function
+(it's negative in order to turn the minima into maxima).
 """
 
 def simulate(params):
   """
   Argument:
-    params - numpy.array([energy, helicity]), where
+    params - 2-d arraylike [energy, helicity]:
       energy = COM energy of beam of particles allegedly being simulated
       helicity = helicity of the alleged beam
   Return value:
-    cross-section of scattering
+           - float: 
+      cross-section of scattering
   """
 
   himmel = (params[0]**2 + params[1] - 11)**2 + (params[0] + params[1]**2 - 7)**2
