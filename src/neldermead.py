@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 This file implements a function to find the location of the minimum
 for a given well-behaved non-linear function in arbitrary dimensions
