@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 This file implements a python function that is intended to be used as part of
 a tutorial on mathematical optimization.
