@@ -1,3 +1,5 @@
+Optimization Tutorial
+========================================
 This is a tutorial created for the CAP-REU
 (Computational Astronomy and Physics) program
 at UNC-CH during the 
